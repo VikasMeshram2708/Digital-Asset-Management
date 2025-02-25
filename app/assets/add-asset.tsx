@@ -23,8 +23,13 @@ import { Input } from "@/components/ui/input";
 import { useForm } from "react-hook-form";
 import { createAssetSchema } from "@/models/assets";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { env } from "@/lib/env";
+import { ImageKitProvider, IKUpload } from "imagekitio-next";
+import { authenticator } from "@/lib/authenticator";
 
 export const AddAsset = () => {
+  const urlEndpoint = env.IMAGE_KIT_URL_ENDPOINT;
+  const publicKey = env.IMAGE_KIT_PUBLIC_KEY;
   const form = useForm<createAssetSchema>({
     resolver: zodResolver(createAssetSchema),
     defaultValues: {
@@ -36,6 +41,14 @@ export const AddAsset = () => {
 
   const onSubmit = (data: createAssetSchema) => {
     console.log("data", data);
+  };
+
+  const onError = () => {
+    console.log("Error");
+  };
+
+  const onSuccess = () => {
+    console.log("Success");
   };
   return (
     <div>
@@ -87,7 +100,20 @@ export const AddAsset = () => {
                       <FormItem>
                         <FormLabel>Upload Assset</FormLabel>
                         <FormControl>
-                          <Input {...field} type="text" />
+                          <ImageKitProvider
+                            publicKey={publicKey}
+                            urlEndpoint={urlEndpoint}
+                            authenticator={authenticator}
+                          >
+                            <div>
+                              <h2>File upload</h2>
+                              <IKUpload
+                                fileName="test-upload.png"
+                                onError={onError}
+                                onSuccess={onSuccess}
+                              />
+                            </div>
+                          </ImageKitProvider>{" "}
                         </FormControl>
                         <FormDescription>Upload your media </FormDescription>
                         <FormMessage />

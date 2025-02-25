@@ -1,7 +1,10 @@
 import NextAuth from "next-auth";
 import Google from "next-auth/providers/google";
-import { env } from "./lib/env";
 import prisma from "./lib/prisma";
+
+const GOOGLE_ID = process.env.AUTH_GOOGLE_ID;
+const GOOGLE_SECRET = process.env.AUTH_GOOGLE_SECRET;
+const AUTH_SECRET = process.env.AUTH_SECRET;
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
   pages: {
@@ -9,11 +12,11 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
   },
   providers: [
     Google({
-      clientId: env.AUTH_GOOGLE_ID,
-      clientSecret: env.AUTH_GOOGLE_SECRET,
+      clientId: GOOGLE_ID,
+      clientSecret: GOOGLE_SECRET,
     }),
   ],
-  secret: env.AUTH_SECRET,
+  secret: AUTH_SECRET,
   session: {
     strategy: "jwt",
     maxAge: 3600,
