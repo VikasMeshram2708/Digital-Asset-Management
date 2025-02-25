@@ -11,8 +11,8 @@ export const createAssetSchema = z.object({
     }),
   description: z
     .string()
-    .min(10, {
-      message: "Description must be at least 10 characters.",
+    .min(1, {
+      message: "Description must be at least 1 characters.",
     })
     .max(500, {
       message: "Description must be at most 500 characters.",
