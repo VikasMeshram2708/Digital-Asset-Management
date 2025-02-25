@@ -5,6 +5,7 @@ import React from "react";
 import { Button } from "../ui/button";
 import { signOut, useSession } from "next-auth/react";
 import { LogOut } from "lucide-react";
+import { navItems } from "@/data";
 
 export default function Navbar() {
   const { status } = useSession();
@@ -14,6 +15,15 @@ export default function Navbar() {
         <h2 className="text-xl md:text-2xl lg:text-3xl font-bold">
           <Link href="/">Dam</Link>
         </h2>
+
+        <ul className="flex items-center gap-4">
+          {Array.isArray(navItems) &&
+            navItems.map((item, idx) => (
+              <li key={idx} className="capitalize">
+                <Link href={item.href}>{item.name}</Link>
+              </li>
+            ))}
+        </ul>
 
         {status === "loading" ? (
           <p>processing...</p>
