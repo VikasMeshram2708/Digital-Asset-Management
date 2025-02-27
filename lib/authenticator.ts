@@ -10,7 +10,7 @@ export const authenticator = async () => {
     }
 
     const data = await response.json();
-    console.log("login auth", data);
+    // console.log("login auth", data);
     const { signature, expire, token } = data;
     return { signature, expire, token };
   } catch (error) {

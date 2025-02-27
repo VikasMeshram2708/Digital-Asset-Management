@@ -1,0 +1,95 @@
+"use server";
+import { auth } from "@/auth";
+import { authenticator } from "@/lib/authenticator";
+import prisma from "@/lib/prisma";
+import { createAssetSchema } from "@/models/assets";
+
+export const uploadAsset = async (data: FormData) => {
+  try {
+    // Extract environment variables
+    const publicKey = process.env.NEXT_PUBLIC_IMAGE_KIT_PUBLIC_KEY;
+    const privateKey = process.env.NEXT_PUBLIC_IMAGE_KIT_PRIVATE_KEY;
+
+    // session
+    const session = await auth();
+
+    if (!publicKey || !privateKey) {
+      throw new Error("ImageKit credentials are missing.");
+    }
+    console.log("incd", data);
+    // Validate the incoming data using Zod schema
+    const validatedData = createAssetSchema.parse(data);
+
+    const { title, description, mediaFile } = validatedData;
+    console.log("indc", { title, description, mediaFile });
+
+    // Ensure the file is provided
+    if (!(mediaFile instanceof File)) {
+      throw new Error("No valid file provided for upload.");
+    }
+
+    // Authenticate with ImageKit
+    const { expire, signature, token } = await authenticator();
+
+    // Create a FormData object and append the file
+    const formData = new FormData();
+    formData.append("file", mediaFile); // Append the actual file
+    formData.append("fileName", title || "untitled_asset");
+    formData.append("folder", "/DAM");
+    formData.append("publicKey", publicKey);
+    formData.append("signature", signature);
+    formData.append("expire", expire);
+    formData.append("token", token);
+    console.log("fd", formData);
+
+    // Define the ImageKit upload URL and options
+    const url = "https://upload.imagekit.io/api/v1/files/upload";
+    const options = {
+      method: "POST",
+      headers: {
+        Authorization: `Basic ${Buffer.from(privateKey).toString("base64")}`,
+      },
+      body: formData,
+    };
+
+    // Perform the upload request
+    const response = await fetch(url, options);
+
+    // Handle non-200 responses
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(`ImageKit upload failed: ${errorData.message}`);
+    }
+
+    // Parse the successful response
+    const responseData: UploadResult = await response.json();
+    console.log("Upload successful:", responseData);
+
+    // Save asset metadata to the database
+    const asset = await prisma.asset.create({
+      data: {
+        title,
+        description,
+        mediaType: responseData.fileType,
+        mediaUrl: responseData.url,
+        user: {
+          connect: {
+            email: String(session?.user?.email),
+          },
+        },
+      },
+    });
+
+    return {
+      success: true,
+      message: "Asset uploaded successfully",
+      asset, // Optionally return the created asset record
+    };
+  } catch (error) {
+    console.error("Something went wrong. Failed to upload the media:", error);
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : "Unknown error occurred",
+    };
+  }
+};
