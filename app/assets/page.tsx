@@ -1,15 +1,15 @@
 import React from "react";
 import { AddAsset } from "./add-asset";
-import MediaUpload from "./media-upload";
-// import { Tp } from "./tp";
+import MyAssets from "@/components/assets/my-assets";
 
 const AssetsPage = () => {
   return (
     <div className="min-h-screen w-full">
       <div className="container mx-auto py-2 px-6">
-        <h2>Assets Page</h2>
-        <AddAsset />
-        {/* <MediaUpload /> */}
+        <div className="py-10">
+          <AddAsset />
+        </div>
+        <MyAssets />
       </div>
     </div>
   );

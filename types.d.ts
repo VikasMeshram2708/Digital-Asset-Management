@@ -14,3 +14,22 @@ type UploadResult = {
   thumbnailUrl: string;
   AITags: null;
 };
+
+type AssetMetaData = {
+  id: string;
+  title: string;
+  description: string;
+  mediaUrl: string;
+  mediaType: string;
+  userId: string;
+  createdAt: string;
+  updatedAt: string;
+};
+
+type AssetsResponse = {
+  success: boolean;
+  meta: {
+    assets: AssetMetaData[];
+    totalAsset: number;
+  };
+};

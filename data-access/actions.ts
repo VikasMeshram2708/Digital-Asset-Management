@@ -3,7 +3,9 @@ import { auth } from "@/auth";
 import { authenticator } from "@/lib/authenticator";
 import prisma from "@/lib/prisma";
 import { createAssetSchema } from "@/models/assets";
+import { revalidatePath } from "next/cache";
 
+// upload asset
 export const uploadAsset = async (data: FormData) => {
   try {
     // Extract environment variables
@@ -16,12 +18,12 @@ export const uploadAsset = async (data: FormData) => {
     if (!publicKey || !privateKey) {
       throw new Error("ImageKit credentials are missing.");
     }
-    console.log("incd", data);
+    // console.log("incd", data);
     // Validate the incoming data using Zod schema
     const validatedData = createAssetSchema.parse(data);
 
     const { title, description, mediaFile } = validatedData;
-    console.log("indc", { title, description, mediaFile });
+    // console.log("indc", { title, description, mediaFile });
 
     // Ensure the file is provided
     if (!(mediaFile instanceof File)) {
@@ -40,7 +42,7 @@ export const uploadAsset = async (data: FormData) => {
     formData.append("signature", signature);
     formData.append("expire", expire);
     formData.append("token", token);
-    console.log("fd", formData);
+    // console.log("fd", formData);
 
     // Define the ImageKit upload URL and options
     const url = "https://upload.imagekit.io/api/v1/files/upload";
@@ -63,10 +65,10 @@ export const uploadAsset = async (data: FormData) => {
 
     // Parse the successful response
     const responseData: UploadResult = await response.json();
-    console.log("Upload successful:", responseData);
+    // console.log("Upload successful:", responseData);
 
     // Save asset metadata to the database
-    const asset = await prisma.asset.create({
+    await prisma.asset.create({
       data: {
         title,
         description,
@@ -79,11 +81,56 @@ export const uploadAsset = async (data: FormData) => {
         },
       },
     });
-
+    revalidatePath("/assets");
     return {
       success: true,
       message: "Asset uploaded successfully",
-      asset, // Optionally return the created asset record
+    };
+  } catch (error) {
+    console.error("Something went wrong. Failed to upload the media:", error);
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : "Unknown error occurred",
+    };
+  }
+};
+
+// fetch assets
+export const fetchAssets = async () => {
+  const session = await auth();
+
+  if (!session?.user) {
+    return {
+      success: false,
+      error: "Login required",
+    };
+  }
+
+  try {
+    const assets = await prisma.asset.findMany({
+      where: {
+        user: {
+          email: String(session.user.email),
+        },
+      },
+      take: 10,
+      orderBy: {
+        createdAt: "desc",
+      },
+    });
+    const totalAssets = await prisma.asset.count({
+      where: {
+        user: {
+          email: String(session.user.email),
+        },
+      },
+    });
+    return {
+      success: true,
+      meta: {
+        assets: assets,
+        totalAsset: totalAssets,
+      },
     };
   } catch (error) {
     console.error("Something went wrong. Failed to upload the media:", error);

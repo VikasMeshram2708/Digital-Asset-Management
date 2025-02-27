@@ -37,6 +37,7 @@ export const AddAsset = () => {
 
   const [isUploading, setIsUploading] = React.useState(false);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
+  const dialogTriggerRef = useRef<HTMLButtonElement | null>(null);
 
   const resetState = () => {
     form.reset(); // Reset form fields
@@ -48,11 +49,13 @@ export const AddAsset = () => {
   const onSubmit = async (data: createAssetSchema) => {
     try {
       setIsUploading(true); // Set uploading state
-      console.log("Form Data:", data);
+      // console.log("Form Data:", data);
+      // @ts-ignore
       const res = await uploadAsset(data);
       if (res.success) {
         toast.success("Asset added successfully!");
         resetState();
+        dialogTriggerRef.current?.click();
       } else {
         toast.error("Something went wrong. Failed to add asset.");
       }
@@ -67,7 +70,10 @@ export const AddAsset = () => {
   return (
     <div>
       <Dialog onOpenChange={(open) => !open && resetState()}>
-        <DialogTrigger className={buttonVariants({ variant: "default" })}>
+        <DialogTrigger
+          ref={dialogTriggerRef}
+          className={buttonVariants({ variant: "default" })}
+        >
           Add Asset
         </DialogTrigger>
         <DialogContent>
@@ -75,7 +81,7 @@ export const AddAsset = () => {
             <DialogTitle className="text-xl md:text-2xl font-bold text-center">
               Fill Your Asset Details
             </DialogTitle>
-            <DialogDescription>
+            <DialogDescription className="text-center">
               Please fill in the details below to add a new asset.
             </DialogDescription>
           </DialogHeader>
