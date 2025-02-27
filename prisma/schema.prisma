@@ -30,10 +30,13 @@ model Asset {
   description String
   mediaUrl    String
   mediaType   String
+  fileId      String @unique
 
   userId String
   user   User   @relation(fields: [userId], references: [id]) // Relation with User
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt()
+
+  @@index([fileId ])
 }

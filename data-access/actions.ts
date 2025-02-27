@@ -2,7 +2,8 @@
 import { auth } from "@/auth";
 import { authenticator } from "@/lib/authenticator";
 import prisma from "@/lib/prisma";
-import { createAssetSchema } from "@/models/assets";
+import { createAssetSchema, deleteAssetSchema } from "@/models/assets";
+import ImageKit from "imagekit";
 import { revalidatePath } from "next/cache";
 
 // upload asset
@@ -74,6 +75,7 @@ export const uploadAsset = async (data: FormData) => {
         description,
         mediaType: responseData.fileType,
         mediaUrl: responseData.url,
+        fileId: responseData.fileId,
         user: {
           connect: {
             email: String(session?.user?.email),
@@ -137,6 +139,57 @@ export const fetchAssets = async () => {
     return {
       success: false,
       error: error instanceof Error ? error.message : "Unknown error occurred",
+    };
+  }
+};
+
+// Delete assets
+export const deleteAsset = async (data: string) => {
+  const session = await auth();
+  if (!session?.user) {
+    return {
+      success: false,
+      error: "Login required",
+    };
+  }
+
+  // Extract environment variables
+  const publicKey = process.env.NEXT_PUBLIC_IMAGE_KIT_PUBLIC_KEY ?? "";
+  const privateKey = process.env.NEXT_PUBLIC_IMAGE_KIT_PRIVATE_KEY ?? "";
+  const urlEndpoint = process.env.NEXT_PUBLIC_IMAGE_KIT_URL_ENDPOINT ?? "";
+
+  const imageKit = new ImageKit({
+    privateKey,
+    publicKey,
+    urlEndpoint,
+  });
+
+  // console.log("incd", data);
+
+  try {
+    // console.log("santd", sanitizeData);
+    await Promise.all([
+      imageKit.deleteFile(data),
+      prisma.asset.delete({
+        where: {
+          fileId: String(data),
+          user: {
+            email: String(session.user.email),
+          },
+        },
+      }),
+    ]);
+
+    revalidatePath("/assets");
+
+    return {
+      success: true,
+      message: "Media asset deleted",
+    };
+  } catch (error) {
+    console.error(error);
+    return {
+      success: false,
     };
   }
 };

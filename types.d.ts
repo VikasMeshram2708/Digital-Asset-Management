@@ -21,6 +21,7 @@ type AssetMetaData = {
   description: string;
   mediaUrl: string;
   mediaType: string;
+  fileId: string;
   userId: string;
   createdAt: string;
   updatedAt: string;

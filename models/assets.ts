@@ -84,3 +84,9 @@ export const createAssetSchema = z.object({
 });
 
 export type createAssetSchema = z.infer<typeof createAssetSchema>;
+
+export const deleteAssetSchema = z.object({
+  fileId: z.string(),
+});
+
+export type deleteAssetSchema = z.infer<typeof deleteAssetSchema>;
