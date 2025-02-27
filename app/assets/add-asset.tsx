@@ -50,7 +50,7 @@ export const AddAsset = () => {
     try {
       setIsUploading(true); // Set uploading state
       // console.log("Form Data:", data);
-      // @ts-ignore
+      // @ts-expect-error expect the formdata error
       const res = await uploadAsset(data);
       if (res.success) {
         toast.success("Asset added successfully!");

@@ -10,7 +10,7 @@ type ShareBtnProps = {
 };
 export default function ShareBtn(props: ShareBtnProps) {
   const copyLink = () => {
-    const link = window.navigator.clipboard.writeText(props.mediaUrl);
+    window.navigator.clipboard.writeText(props.mediaUrl);
     toast.success("Link copied");
   };
   return (

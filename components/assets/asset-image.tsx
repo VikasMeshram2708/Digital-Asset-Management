@@ -1,5 +1,6 @@
 "use client";
 import { IKImage } from "imagekitio-next";
+import Image from "next/image";
 import React, { useState } from "react";
 
 type AssetImageProps = {
@@ -23,9 +24,14 @@ export default function AssetImage(props: AssetImageProps) {
         >
           <div className="bg-white p-1 rounded-lg shadow-lg max-w-[500px] max-h-[500px]">
             {/* Reduced padding from p-4 to p-2 */}
-            <img
+            <Image
               src={mediaUrl}
               alt={title}
+              width={250}
+              height={250}
+              style={{
+                objectFit: "cover",
+              }}
               className="w-full h-full object-contain max-w-[500px] max-h-[500px]"
               onClick={(e) => e.stopPropagation()} // Prevent closing when clicking on the image
             />

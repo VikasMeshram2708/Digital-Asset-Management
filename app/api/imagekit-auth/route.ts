@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from "next/server";
+import {NextResponse } from "next/server";
 import ImageKit from "imagekit";
 
 const imagekit = new ImageKit({
@@ -7,6 +7,6 @@ const imagekit = new ImageKit({
   privateKey: process.env.NEXT_PUBLIC_IMAGE_KIT_PRIVATE_KEY!,
 });
 
-export async function GET(request: NextRequest) {
+export async function GET() {
   return NextResponse.json(imagekit.getAuthenticationParameters());
 }

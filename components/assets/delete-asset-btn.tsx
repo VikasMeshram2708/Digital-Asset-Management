@@ -5,7 +5,6 @@ import { Button } from "../ui/button";
 import { Delete } from "lucide-react";
 import { deleteAsset } from "@/data-access/actions";
 import { toast } from "sonner";
-import prisma from "@/lib/prisma";
 
 type DeleteAssetBtnProps = {
   fileId: string;

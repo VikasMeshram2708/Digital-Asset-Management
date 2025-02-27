@@ -5,7 +5,6 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
-  CardFooter,
 } from "../ui/card";
 import {
   DropdownMenu,
@@ -23,7 +22,7 @@ import Link from "next/link";
 import DeleteAssetBtn from "./delete-asset-btn";
 
 export default async function MyAssets() {
-  // @ts-ignore
+  // @ts-expect-error let it go dude
   const res: AssetsResponse = await fetchAssets();
   const data = res.meta;
 
