@@ -1,7 +1,4 @@
 import React from "react";
-import resultImg from "@/public/home/results.png";
-import ctaBtn from "@/public/home/cta-btn.png";
-import ctaForm from "@/public/home/form.png";
 import Image from "next/image";
 
 const steps = [
@@ -9,26 +6,26 @@ const steps = [
     id: 1,
     label: "Want to upload asset?",
     description: "Click on add asset to begin the process.",
-    img: ctaBtn,
+    img: "https://ik.imagekit.io/leywq8vud/DAM%20(SEO)/6569140.gif?updatedAt=1740747640460",
   },
   {
     id: 2,
     label: "Fill in Details",
     description: "Provide all necessary details for your asset.",
-    img: ctaForm,
+    img: "https://ik.imagekit.io/leywq8vud/DAM%20(SEO)/original-7e974ceca651feb6123f2ac24cf57f42.gif?updatedAt=1740747672874",
   },
   {
     id: 3,
     label: "Completion",
     description:
       "Your asset will be available immediately after a successful upload.",
-    img: resultImg,
+    img: "https://ik.imagekit.io/leywq8vud/DAM%20(SEO)/happy.gif?updatedAt=1740747862750",
   },
 ];
 
 export const Preview = () => {
   return (
-    <div className="w-full py-10 ">
+    <div className="w-full py-10">
       <div className="container mx-auto px-6 py-8 ">
         <h2 className="text-3xl font-bold text-center pb-5">
           How {"It's"} Done
@@ -49,13 +46,16 @@ export const Preview = () => {
                 <span className="text-xl font-semibold">{step.label}</span>
               </div>
               {step.img && (
-                <div className="w-full max-w-sm rounded-lg overflow-hidden shadow-md">
+                <div className="w-full max-w-sm rounded-lg overflow-hidden">
                   <Image
                     src={step.img}
                     alt={step.label}
                     width={400}
                     height={250}
                     className="w-full h-auto"
+                    style={{
+                      objectFit: "cover",
+                    }}
                   />
                 </div>
               )}

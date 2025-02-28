@@ -10,7 +10,9 @@ export default async function Home() {
   return (
     <main className="min-h-screen w-full">
       <div className="container mx-auto px-6 py-2">
-        <Hero />
+        <div className="py-5">
+          <Hero />
+        </div>
         <Preview />
       </div>
     </main>
