@@ -3,7 +3,6 @@
 import { mediaItems } from "@/data";
 import Link from "next/link";
 import React from "react";
-import { Icons } from "@/components/icons"; // Assuming you have an Icons component for social media icons
 
 export default function Footer() {
   return (

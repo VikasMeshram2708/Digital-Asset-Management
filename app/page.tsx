@@ -1,8 +1,8 @@
-import { auth } from "@/auth";
+// import { auth } from "@/auth";
 import { Hero } from "@/components/home/hero";
 import { Preview } from "@/components/home/preview";
-import { Button } from "@/components/ui/button";
-import Image from "next/image";
+// import { Button } from "@/components/ui/button";
+// import Image from "next/image";
 // import heroImg from "@/public/home/cloud-save.gif";
 
 export default async function Home() {

@@ -12,11 +12,44 @@ import {
 } from "@/components/ui/breadcrumb";
 
 import React from "react";
+import { Metadata } from "next";
+import { auth } from "@/auth";
 
 type SingleAssetProps = {
   params: Promise<{
     id: string;
   }>;
+};
+
+export const generateMetadata = async (
+  params: SingleAssetProps
+): Promise<Metadata> => {
+  const session = await auth();
+  const asset = await params.params;
+  const assetData = await prisma.asset.findUnique({
+    where: {
+      id: String(asset.id),
+    },
+  });
+
+  return {
+    title: assetData?.title,
+    description: assetData?.description,
+    openGraph: {
+      title: assetData?.title,
+      description: assetData?.description,
+      images: [assetData?.mediaUrl as string],
+      authors: session?.user?.name,
+      publishedTime: assetData?.createdAt.toISOString(),
+      url: `https://dam-ruby.vercel.app/assets/${asset.id}`,
+    },
+    twitter: {
+      title: assetData?.title,
+      description: assetData?.description,
+      card: "summary_large_image",
+      creator: session?.user?.name ?? "No Name",
+    },
+  };
 };
 
 export default async function SingleAsset(params: SingleAssetProps) {

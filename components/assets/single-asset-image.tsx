@@ -9,15 +9,13 @@ type SingleAssetImageProps = {
 export default function SingleAssetImage(props: SingleAssetImageProps) {
   const assetData = props;
   return (
-    <div className="relative aspect-square">
+    <div className="relative aspect-square p-5">
       <IKImage
         src={assetData?.mediaUrl}
         alt={assetData?.title as string}
-        style={{
-          objectFit: "cover",
-        }}
         fill
         sizes="100vw"
+        className="bg-cover"
       />
     </div>
   );
