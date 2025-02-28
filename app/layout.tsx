@@ -3,7 +3,7 @@ import "./globals.css";
 import Navbar from "@/components/header/navbar";
 import { AuthProvider } from "./context/auth-provider";
 import { Toaster } from "@/components/ui/sonner";
-
+import Footer from "@/components/footer/footer";
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -17,11 +17,11 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body
-      >
+      <body>
         <AuthProvider>
           <Navbar />
           {children}
+          <Footer />
           <Toaster position="top-right" />
         </AuthProvider>
       </body>
